@@ -28,7 +28,7 @@ defmodule BracketsBalance do
   end
 
   def check(text) do
-    IO.puts(text)
+    IO.write(text <> " is_balanced? ")
     if length(add_to_stack([], 0, String.codepoints(text))) == 0 do
         IO.puts true
     else
@@ -38,3 +38,8 @@ defmodule BracketsBalance do
 end
 
 BracketsBalance.check("[22]{}()")
+BracketsBalance.check("[asd]{azx}(1231)")
+BracketsBalance.check("[[]{23}(zx)")
+BracketsBalance.check("[asd2]{]}(asd)")
+BracketsBalance.check("([asd]{23}())")
+BracketsBalance.check("([)]{}()")
