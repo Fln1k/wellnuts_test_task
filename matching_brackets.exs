@@ -11,17 +11,14 @@ defmodule BracketsBalance do
         if Map.has_key?(@brackets, Enum.at(check_string, counter)) do
           stack ++ [Enum.at(check_string, counter)]
         else
-        stack = 
             if Enum.at(check_string, counter) == @brackets[Enum.at(stack, -1)] do
                 stack |> Enum.reverse() |> tl() |> Enum.reverse()
             else
-                stack = 
                 if Map.values(@brackets) |> Enum.member?(Enum.at(check_string, counter)) do
                     [Enum.at(check_string, counter)]++stack
                 else
                     stack
                 end           
-                stack
             end 
         end
       add_to_stack(stack, counter + 1, check_string)
@@ -40,4 +37,4 @@ defmodule BracketsBalance do
   end
 end
 
-BracketsBalance.check("[22]{}({})")
+BracketsBalance.check("[22]{}()")
