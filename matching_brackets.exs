@@ -23,16 +23,20 @@ defmodule BracketsBalance do
         end
       add_to_stack(stack, counter + 1, check_string)
     else
-      stack
+      if length(stack)==0 do
+        :ok
+      else
+        :error
+      end
     end
   end
 
   def check(text) do
     IO.write(text <> " is_balanced? ")
-    if length(add_to_stack([], 0, String.codepoints(text))) == 0 do
+    with :ok <- add_to_stack([], 0, String.codepoints(text)) do
         IO.puts true
     else
-        IO.puts false     
+        :error -> IO.puts false     
     end
   end
 end
