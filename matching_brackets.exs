@@ -5,35 +5,27 @@ defmodule BracketsBalance do
     "[" => "]"
   }
 
-  def add_to_stack(stack, counter, check_string) do
-    if counter < length(check_string) do
-      stack =
-        if Map.has_key?(@brackets, Enum.at(check_string, counter)) do
-          stack ++ [Enum.at(check_string, counter)]
+  def add_to_stack([], []), do: :ok
+  def add_to_stack(_, []), do: :error
+
+  def add_to_stack(stack, [current_symbol | rest_string]) do
+        if Map.has_key?(@brackets, current_symbol) do
+          add_to_stack([current_symbol] ++ stack, rest_string)
         else
-            if Enum.at(check_string, counter) == @brackets[Enum.at(stack, -1)] do
-                stack |> Enum.reverse() |> tl() |> Enum.reverse()
+            if current_symbol == @brackets[Enum.at(stack, 0)] do add_to_stack(tl(stack), rest_string)
             else
-                if Map.values(@brackets) |> Enum.member?(Enum.at(check_string, counter)) do
-                    [Enum.at(check_string, counter)]++stack
+                if Map.values(@brackets) |> Enum.member?(current_symbol) do
+                    :error
                 else
-                    stack
+                    add_to_stack(stack, rest_string)
                 end           
-            end 
-        end
-      add_to_stack(stack, counter + 1, check_string)
-    else
-      if length(stack)==0 do
-        :ok
-      else
-        :error
-      end
-    end
+            end
+        end 	
   end
 
   def check(text) do
     IO.write(text <> " is_balanced? ")
-    with :ok <- add_to_stack([], 0, String.codepoints(text)) do
+    with :ok <- add_to_stack([], String.codepoints(text)) do
         IO.puts true
     else
         :error -> IO.puts false     
@@ -46,4 +38,3 @@ BracketsBalance.check("[asd]{azx}(1231)")
 BracketsBalance.check("[[]{23}(zx)")
 BracketsBalance.check("[asd2]{]}(asd)")
 BracketsBalance.check("([asd]{23}())")
-BracketsBalance.check("([)]{}()")
