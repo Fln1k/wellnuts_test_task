@@ -23,8 +23,8 @@ defmodule Game do
   end
 
   def insert_figure(board,figure) do
-    List.update_at(board, figure.position_x, fn row ->
-      List.replace_at(row, figure.position_y, figure.name)
+    List.update_at(board, figure.position_y, fn row ->
+      List.replace_at(row, figure.position_x, figure.name)
     end)
   end
 
