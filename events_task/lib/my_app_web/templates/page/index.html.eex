@@ -1,0 +1,41 @@
+<section>
+    <%= if @current_user do %>
+    <p class="lead">User: <code>
+            <%= @current_user.email %></code>. </p>
+    <ui>
+        <td>
+            <%= link "New Event", to: event_path(@conn, :new), class: "btn btn-lg btn-primary" %>
+        </td>
+        <td>
+            <%= link "Logout", to: auth_path(@conn, :destroy), class: "btn btn-lg btn-primary" %>
+        <td>
+    </ui>
+    <% else %>
+    <h1 class="page-header">Unauthenticated</h1>
+    <p class="lead">You are not signed in.</p>
+    <%= link "Login", to: auth_path(@conn, :new), class: "btn btn-lg btn-primary" %>
+    <% end %>
+</section>
+<h1 class="page-header">Event list</h1>
+<table border="1">
+    <th>Description</th>
+    <th>Timestamp </th>
+    <th>Actions </th>
+    <%= for event <- @events do %>
+    <tr>
+        <td>
+            <%= event.description %>
+        </td>
+        <td>
+            <%= event.timestamp %>
+        </td>
+        <td>
+            <%= link " Show ", to: event_path(@conn, :show, event) %>  
+            <%= if @current_user != nil and @current_user.id == event.author_id do %>
+            <%= link " Edit ", to: event_path(@conn, :edit, event) %>  
+            <%= link " Delete ", to: event_path(@conn, :delete, event), method: :delete, data: [confirm: "Are you sure?"] %>  
+            <% end %>
+        </td>
+    </tr>
+    <% end %>
+</table>

@@ -1,0 +1,19 @@
+<h1>Show Event</h1>
+
+<ul>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @event.description %>
+  </li>
+
+  <li>
+    <strong>Timestamp:</strong>
+    <%= @event.timestamp %>
+  </li>
+
+</ul>
+<%= if @current_user != nil and @current_user.id == @event.author_id do %>
+<span><%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
+<% end %>
+<span><%= link "Back", to: "/" %></span>
