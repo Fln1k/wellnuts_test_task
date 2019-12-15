@@ -23,8 +23,6 @@ defmodule MyAppWeb.Guardian do
   @impl true
   def deliver_magic_link(_user, magic_token, _opts) do
     require Logger
-    alias MyApp.Email
-    alias MyApp.Mailer
     alias MyAppWeb.Endpoint
     import MyAppWeb.Router.Helpers
 

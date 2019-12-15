@@ -22,6 +22,7 @@ defmodule MyAppWeb.Router do
     resources("/events", EventController)
     get("/confirm", ConfirmationController, :create)
     get("/", PageController, :index)
+    post("/update", AuthController, :update)
     get("/login", AuthController, :new)
     get("/logout", AuthController, :destroy)
     post("/login", AuthController, :create)

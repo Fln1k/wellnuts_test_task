@@ -32,6 +32,12 @@ defmodule MyApp.Accounts do
     |> Repo.insert()
   end
 
+  def update_user(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
   def change_user(attrs \\ %{}) do
     User.changeset(%User{}, attrs)
   end

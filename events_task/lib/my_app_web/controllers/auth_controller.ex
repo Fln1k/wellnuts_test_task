@@ -23,6 +23,20 @@ defmodule MyAppWeb.AuthController do
     end
   end
 
+  def update(conn, %{"user" => user_params}) do
+    user = Guardian.Plug.current_resource(conn)
+
+    case Accounts.update_user(user, user_params) do
+      {:ok, user} ->
+        conn
+        |> put_flash(:info, "User updated successfully.")
+        |> redirect(to: page_path(conn, :index))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, "/", user: user, changeset: changeset)
+    end
+  end
+
   def callback(conn, %{"magic_token" => magic_token}) do
     case Guardian.decode_magic(magic_token) do
       {:ok, user, _claims} ->
