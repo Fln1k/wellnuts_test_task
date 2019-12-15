@@ -3,10 +3,8 @@ defmodule MyApp.Accounts.User do
   import Ecto.Changeset
   alias MyApp.Accounts.User
 
-
   schema "users" do
-    field :email, :string
-
+    field(:email, :string)
     timestamps()
   end
 

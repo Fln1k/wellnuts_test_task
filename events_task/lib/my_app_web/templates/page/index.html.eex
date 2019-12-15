@@ -18,9 +18,12 @@
 </section>
 <h1 class="page-header">Event list</h1>
 <table border="1">
-    <th>Description</th>
-    <th>Timestamp </th>
-    <th>Actions </th>
+    <th style="text-align: center;">Description</th>
+    <th style="text-align: center;">Timestamp </th>
+    <th style="text-align: center;">Actions </th>
+    <%= if @current_user do %>
+    <th style="text-align: center;">Confirmation </th>
+    <% end %> 
     <%= for event <- @events do %>
     <tr>
         <td>
@@ -29,13 +32,25 @@
         <td>
             <%= event.timestamp %>
         </td>
-        <td>
+        <td style="text-align: center;">
             <%= link " Show ", to: event_path(@conn, :show, event) %>  
-            <%= if @current_user != nil and @current_user.id == event.author_id do %>
-            <%= link " Edit ", to: event_path(@conn, :edit, event) %>  
-            <%= link " Delete ", to: event_path(@conn, :delete, event), method: :delete, data: [confirm: "Are you sure?"] %>  
+            <%= if @current_user do %>
+                <%= if @current_user.id == event.author_id do %>
+                |
+                <%= link " Edit ", to: event_path(@conn, :edit, event) %>  
+                <% end %>
+                </td>
+                <td style="text-align: center;">
+                <%= if Enum.member?(@current_user_confirmations, event.id) do %>
+                    Confirmed
+                <% else %>
+                    <%= link "Confirm", to: confirmation_path(@conn,:create,confirmation=%{"user_id"=>@current_user.id, "event_id"=>event.id}) %>
+                <% end %>
             <% end %>
         </td>
     </tr>
     <% end %>
+    <%IO.inspect "-----------------------------------------"%>
+    <% IO.inspect @current_user_confirmations%>
+     <%IO.inspect "-----------------------------------------"%>
 </table>

@@ -3,6 +3,7 @@ defmodule MyAppWeb.EventController do
 
   alias MyApp.Content
   alias MyApp.Content.Event
+  alias MyApp.UserEventConfirmation
 
   def index(conn, _params) do
     events = Content.list_events()
@@ -38,7 +39,8 @@ defmodule MyAppWeb.EventController do
 
     render(conn, "show.html",
       event: event,
-      current_user: Guardian.Plug.current_resource(conn)
+      current_user: Guardian.Plug.current_resource(conn),
+      user_email_list: UserEventConfirmation.user_list_by_event_id(event.id)
     )
   end
 

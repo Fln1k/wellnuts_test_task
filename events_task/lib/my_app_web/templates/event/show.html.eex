@@ -13,7 +13,19 @@
   </li>
 
 </ul>
-<%= if @current_user != nil and @current_user.id == @event.author_id do %>
-<span><%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
-<% end %>
 <span><%= link "Back", to: "/" %></span>
+<%= if @current_user do %>
+	<%= if @current_user.id == @event.author_id do %>
+	<span><%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
+	<% end %>
+	<%= if Enum.member?(@user_email_list, @current_user.email) do %>
+        Confirmed
+    <% else %>
+        <%= link "Confirm", to: confirmation_path(@conn,:create,confirmation=%{"user_id"=>@current_user.id, "event_id"=>@event.id}) %>
+    <% end %>
+<% end %>
+<h1 class="page-header">User list</h1>
+<%= for email <- @user_email_list do %>
+	<%= email %>
+	<hr>
+<% end %>
