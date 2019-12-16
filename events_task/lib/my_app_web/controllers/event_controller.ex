@@ -17,8 +17,17 @@ defmodule MyAppWeb.EventController do
     case Content.create_event(event_params) do
       {:ok, event} ->
         conn
-        |> put_flash(:info, "Event created successfully.")
-        |> redirect(to: event_path(conn, :show, event))
+        |> redirect(
+          to:
+            confirmation_path(
+              conn,
+              :create,
+              confirmation = %{
+                "user_id" => Guardian.Plug.current_resource(conn).id,
+                "event_id" => event.id
+              }
+            )
+        )
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
