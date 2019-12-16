@@ -35,7 +35,7 @@ defmodule MyApp.UserEventConfirmation do
     end
   end
 
-  def user_list_by_event_id(event_id) do
+  def user_email_list_by_event_id(event_id) do
     user_ids =
       Repo.all(
         from(u in Confirmation,
