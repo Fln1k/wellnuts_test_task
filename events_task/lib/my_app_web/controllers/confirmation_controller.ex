@@ -2,11 +2,10 @@ defmodule MyAppWeb.ConfirmationController do
   use MyAppWeb, :controller
 
   alias MyApp.UserEventConfirmation
-  alias MyApp.UserEventConfirmation.Confirmation
 
   def create(conn, confirmation_params) do
     case UserEventConfirmation.create_confirmation(confirmation_params) do
-      {:ok, confirmation} ->
+      {:ok, _confirmation} ->
         conn
         |> put_flash(:info, "Confirmed successfully.")
         |> redirect(to: "/")

@@ -50,10 +50,6 @@ defmodule MyApp.Content do
 
   """
   def create_event(attrs \\ %{}) do
-    IO.inspect("---------------------------------------------------------")
-    IO.inspect(attrs)
-    IO.inspect("---------------------------------------------------------")
-
     %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()

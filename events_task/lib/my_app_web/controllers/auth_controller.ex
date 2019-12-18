@@ -57,7 +57,7 @@ defmodule MyAppWeb.AuthController do
     |> redirect(to: page_path(conn, :index))
   end
 
-  def auth_error(conn, error, _opts) do
+  def auth_error(conn, _opts) do
     conn
     |> put_flash(:error, "Authentication error.")
     |> redirect(to: auth_path(conn, :new))

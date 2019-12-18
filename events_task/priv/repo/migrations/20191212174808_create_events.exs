@@ -5,11 +5,11 @@ defmodule MyApp.Repo.Migrations.CreateEvents do
     create table(:events) do
       add(:description, :string)
       add(:timestamp, :naive_datetime)
-      add(:author_id, references(:users, on_delete: :nothing))
+      add(:user_id, references(:users, on_delete: :delete_all))
 
       timestamps()
     end
 
-    create(index(:events, [:author_id]))
+    create(index(:events, [:user_id]))
   end
 end

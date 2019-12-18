@@ -50,7 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :my_app, MyApp.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
+  username: "fln1k_dev",
   password: "saynotorasizm",
   database: "my_app_dev",
   hostname: "localhost",

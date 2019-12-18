@@ -15,13 +15,13 @@
 </ul>
 <span><%= link "Back", to: "/" %></span>
 <%= if @current_user do %>
-	<%= if @current_user.id == @event.author_id do %>
+	<%= if @current_user.id == @event.user_id do %>
 	<span><%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
 	<% end %>
 	<%= if Enum.member?(@user_email_list, @current_user.email) do %>
         Confirmed
     <% else %>
-        <%= link "Confirm", to: confirmation_path(@conn,:create,confirmation=%{"user_id"=>@current_user.id, "event_id"=>@event.id}) %>
+        <%= link "Confirm", to: confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>@event.id}) %>
     <% end %>
 <% end %>
 <h1 class="page-header">User list</h1>

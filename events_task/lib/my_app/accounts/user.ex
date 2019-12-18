@@ -5,6 +5,8 @@ defmodule MyApp.Accounts.User do
 
   schema "users" do
     field(:email, :string)
+    has_many(:events, MyApp.Content.Event)
+    has_many(:confirmations, MyApp.UserEventConfirmation.Confirmation)
     timestamps()
   end
 
@@ -12,6 +14,7 @@ defmodule MyApp.Accounts.User do
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:email])
+    |> unique_constraint(:email)
     |> validate_required([:email])
   end
 end

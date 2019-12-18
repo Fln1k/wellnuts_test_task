@@ -4,6 +4,8 @@ defmodule MyAppWeb.EventController do
   alias MyApp.Content.Event
   alias MyApp.UserEventConfirmation
 
+  plug(:check_author when action in [:edit])
+
   def new(conn, _params) do
     changeset = Content.change_event(%Event{})
 
@@ -22,7 +24,7 @@ defmodule MyAppWeb.EventController do
             confirmation_path(
               conn,
               :create,
-              confirmation = %{
+              %{
                 "user_id" => Guardian.Plug.current_resource(conn).id,
                 "event_id" => event.id
               }
@@ -70,5 +72,9 @@ defmodule MyAppWeb.EventController do
           changeset: changeset
         )
     end
+  end
+
+  defp check_author(conn, _params) do
+    conn
   end
 end

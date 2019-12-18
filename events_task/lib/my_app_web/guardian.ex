@@ -26,7 +26,7 @@ defmodule MyAppWeb.Guardian do
     alias MyAppWeb.Endpoint
     import MyAppWeb.Router.Helpers
 
-    MyApp.Email.welcome_text_email(
+    MyApp.Email.login_link_email(
       _user.email,
       auth_url(Endpoint, :callback, magic_token)
     )

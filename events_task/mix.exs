@@ -42,8 +42,9 @@ defmodule MyApp.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
-      {:bamboo, "~> 0.7"},
-      {:bamboo_smtp, "~> 1.2.1"}
+      {:bamboo, "~> 1.3"},
+      {:plug_cowboy, "~> 1.0"},
+      {:bamboo_smtp, "~> 2.1.0"}
     ]
   end
 

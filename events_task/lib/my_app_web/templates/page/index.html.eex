@@ -49,7 +49,8 @@
         <td style="text-align: center;">
             <%= link " Show ", to: event_path(@conn, :show, event) %>
             <%= if @current_user do %>
-            <%= if @current_user.id == event.author_id do %>
+            <% IO.inspect event.user_id%>
+            <%= if @current_user.id == event.user_id do %>
             |
             <%= link " Edit ", to: event_path(@conn, :edit, event) %>
             <% end %>
@@ -58,7 +59,7 @@
             <%= if Enum.member?(@current_user_confirmations, event.id) do %>
             Confirmed
             <% else %>
-            <%= link "Confirm", to: confirmation_path(@conn,:create,confirmation=%{"user_id"=>@current_user.id, "event_id"=>event.id}) %>
+            <%= link "Confirm", to: confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>event.id}) %>
             <% end %>
             <% end %>
         </td>
