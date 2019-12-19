@@ -16,7 +16,9 @@ defmodule MyAppWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
-    case Content.create_event(event_params) do
+    case Content.create_event(
+           Map.put(event_params, "user_id", Guardian.Plug.current_resource(conn).id)
+         ) do
       {:ok, event} ->
         conn
         |> redirect(
@@ -49,12 +51,19 @@ defmodule MyAppWeb.EventController do
   def edit(conn, %{"id" => id}) do
     event = Content.get_event!(id)
     changeset = Content.change_event(event)
+    current_user = Guardian.Plug.current_resource(conn)
 
-    render(conn, "edit.html",
-      event: event,
-      changeset: changeset,
-      current_user: Guardian.Plug.current_resource(conn)
-    )
+    if event.user_id == current_user.id do
+      render(conn, "edit.html",
+        event: event,
+        changeset: changeset,
+        current_user: current_user
+      )
+    else
+      conn
+      |> put_flash(:error, "No access to this action.")
+      |> redirect(to: "/")
+    end
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
