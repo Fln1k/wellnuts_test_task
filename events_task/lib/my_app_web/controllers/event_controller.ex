@@ -82,8 +82,4 @@ defmodule MyAppWeb.EventController do
         )
     end
   end
-
-  defp check_author(conn, _params) do
-    conn
-  end
 end
