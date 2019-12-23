@@ -11,9 +11,9 @@ defmodule MyApp.UserEventConfirmation do
 
   def list_user_confirmed_event_ids(user) do
     if user do
-      from(u in Confirmation,
-        where: u.user_id == ^user.id,
-        select: u.event_id
+      from(c in Confirmation,
+        where: c.user_id == ^user.id,
+        select: c.event_id
       )
       |> Repo.all()
     else

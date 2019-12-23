@@ -24,16 +24,16 @@ defmodule MyAppWeb.AuthController do
   end
 
   def update(conn, %{"user" => user_params}) do
-    user = Guardian.Plug.current_resource(conn)
+    _user = Guardian.Plug.current_resource(conn)
 
-    case Accounts.update_user(user, user_params) do
-      {:ok, user} ->
+    case Accounts.update_user(_user, user_params) do
+      {:ok, _user} ->
         conn
         |> put_flash(:info, "User updated successfully.")
         |> redirect(to: page_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "/", user: user, changeset: changeset)
+        render(conn, "/", user: _user, changeset: changeset)
     end
   end
 
@@ -57,7 +57,7 @@ defmodule MyAppWeb.AuthController do
     |> redirect(to: page_path(conn, :index))
   end
 
-  def auth_error(conn, _opts) do
+  def auth_error(conn, _error, _opts) do
     conn
     |> put_flash(:error, "Authentication error.")
     |> redirect(to: auth_path(conn, :new))

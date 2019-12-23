@@ -4,8 +4,6 @@ defmodule MyAppWeb.EventController do
   alias MyApp.Content.Event
   alias MyApp.UserEventConfirmation
 
-  plug(:check_author when action in [:edit])
-
   def new(conn, _params) do
     changeset = Content.change_event(%Event{})
 

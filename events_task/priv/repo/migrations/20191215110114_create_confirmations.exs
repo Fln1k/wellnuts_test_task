@@ -9,6 +9,7 @@ defmodule MyApp.Repo.Migrations.CreateConfirmations do
       timestamps()
     end
 
+    create(unique_index(:confirmations, [:user_id, :event_id]))
     create(index(:confirmations, [:user_id]))
     create(index(:confirmations, [:event_id]))
   end

@@ -8,7 +8,6 @@ defmodule MyApp.UserEventConfirmation.Confirmation do
     timestamps()
   end
 
-  @doc false
   def changeset(confirmation, attrs) do
     confirmation
     |> cast(attrs, [:user_id, :event_id])
