@@ -28,7 +28,8 @@ defmodule MyAppWeb.EventController do
                 "user_id" => Guardian.Plug.current_resource(conn).id,
                 "event_id" => event.id
               }
-            )
+            ),
+          method: "post"
         )
 
       {:error, %Ecto.Changeset{} = changeset} ->

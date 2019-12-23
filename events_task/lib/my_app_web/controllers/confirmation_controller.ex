@@ -5,16 +5,16 @@ defmodule MyAppWeb.ConfirmationController do
 
   alias MyApp.UserEventConfirmation.Confirmation
 
-  def create(conn, confirmation_params) do
+  def create(conn, params) do
     case from(c in Confirmation,
            where:
-             c.event_id == ^confirmation_params["event_id"] and
-               c.user_id == ^confirmation_params["user_id"],
+             c.event_id == ^params["event_id"] and
+               c.user_id == ^params["user_id"],
            select: c.event_id
          )
          |> Repo.one() do
       nil ->
-        case MyApp.UserEventConfirmation.create_confirmation(confirmation_params) do
+        case MyApp.UserEventConfirmation.create_confirmation(params) do
           {:ok, _confirmation} ->
             conn
             |> put_flash(:info, "Confirmed successfully.")

@@ -1,6 +1,5 @@
 defmodule MyAppWeb.PageController do
   use MyAppWeb, :controller
-
   alias MyApp.Content
   alias MyApp.UserEventConfirmation
   alias MyAppWeb.Guardian

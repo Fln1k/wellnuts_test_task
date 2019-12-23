@@ -20,6 +20,7 @@ defmodule MyAppWeb.Router do
   scope "/", MyAppWeb do
     pipe_through(:browser)
     resources("/events", EventController)
+    post("/confirmations", ConfirmationController, :create)
     get("/confirmations", ConfirmationController, :create)
     get("/", PageController, :index)
     post("/update", AuthController, :update)
