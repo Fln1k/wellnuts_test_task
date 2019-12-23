@@ -18,18 +18,12 @@ defmodule MyAppWeb.EventController do
            Map.put(event_params, "user_id", Guardian.Plug.current_resource(conn).id)
          ) do
       {:ok, event} ->
-        conn
-        |> redirect(
-          to:
-            confirmation_path(
-              conn,
-              :create,
-              %{
-                "user_id" => Guardian.Plug.current_resource(conn).id,
-                "event_id" => event.id
-              }
-            ),
-          method: "post"
+        MyAppWeb.ConfirmationController.create(
+          conn,
+          %{
+            "user_id" => Guardian.Plug.current_resource(conn).id,
+            "event_id" => event.id
+          }
         )
 
       {:error, %Ecto.Changeset{} = changeset} ->
