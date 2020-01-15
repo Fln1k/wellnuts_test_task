@@ -5,6 +5,7 @@ defmodule MyAppWeb.EventController do
   alias MyApp.Content
   require Logger
 
+  plug(:authenticated when action in [:new, :create, :edit, :update])
   plug(:author_check when action in [:edit, :update])
 
   def new(conn, _params) do
@@ -73,9 +74,19 @@ defmodule MyAppWeb.EventController do
   end
 
   def author_check(conn, _params) do
-    if Guardian.Plug.current_resource(conn) &&
-         Guardian.Plug.current_resource(conn).id ==
-           Content.get_event!(conn.path_params["id"]).user_id do
+    if Guardian.Plug.current_resource(conn).id ==
+         Content.get_event!(conn.path_params["id"]).user_id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Denied")
+      |> redirect(to: "/")
+      |> halt
+    end
+  end
+
+  def authenticated(conn, _params) do
+    if Guardian.Plug.current_resource(conn) do
       conn
     else
       conn
