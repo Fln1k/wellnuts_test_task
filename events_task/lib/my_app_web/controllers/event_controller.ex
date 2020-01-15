@@ -81,6 +81,7 @@ defmodule MyAppWeb.EventController do
       conn
       |> put_flash(:error, "Denied")
       |> redirect(to: "/")
+      |> halt
     end
   end
 end
