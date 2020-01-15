@@ -1,104 +1,70 @@
 defmodule MyApp.Content do
-  @moduledoc """
-  The Content context.
-  """
-
   import Ecto.Query, warn: false
   alias MyApp.Repo
-
   alias MyApp.Content.Event
+  alias MyApp.Content.Confirmation
+  alias MyApp.Accounts.User
 
-  @doc """
-  Returns the list of events.
-
-  ## Examples
-
-      iex> list_events()
-      [%Event{}, ...]
-
-  """
   def list_events do
     Repo.all(Event)
   end
 
-  @doc """
-  Gets a single event.
-
-  Raises `Ecto.NoResultsError` if the Event does not exist.
-
-  ## Examples
-
-      iex> get_event!(123)
-      %Event{}
-
-      iex> get_event!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_event!(id), do: Repo.get!(Event, id)
 
-  @doc """
-  Creates a event.
-
-  ## Examples
-
-      iex> create_event(%{field: value})
-      {:ok, %Event{}}
-
-      iex> create_event(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_event(attrs \\ %{}) do
     %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a event.
-
-  ## Examples
-
-      iex> update_event(event, %{field: new_value})
-      {:ok, %Event{}}
-
-      iex> update_event(event, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_event(%Event{} = event, attrs) do
     event
     |> Event.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Event.
-
-  ## Examples
-
-      iex> delete_event(event)
-      {:ok, %Event{}}
-
-      iex> delete_event(event)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_event(%Event{} = event) do
     Repo.delete(event)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking event changes.
-
-  ## Examples
-
-      iex> change_event(event)
-      %Ecto.Changeset{source: %Event{}}
-
-  """
   def change_event(%Event{} = event) do
     Event.changeset(event, %{})
+  end
+
+  def list_confirmations do
+    Repo.all(Confirmation)
+  end
+
+  def list_user_confirmed_event_ids(user) do
+    if user do
+      from(c in Confirmation,
+        where: c.user_id == ^user.id,
+        select: c.event_id
+      )
+      |> Repo.all()
+    else
+      []
+    end
+  end
+
+  def user_email_list_by_event_id(event_id) do
+    from(u in User,
+      join: c in assoc(u, :confirmations),
+      where: c.event_id == ^event_id,
+      select: u.email
+    )
+    |> Repo.all()
+  end
+
+  def get_confirmation!(id), do: Repo.get!(Confirmation, id)
+
+  def create_confirmation(attrs \\ %{}) do
+    %Confirmation{}
+    |> Confirmation.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def change_confirmation(%Confirmation{} = confirmation) do
+    Confirmation.changeset(confirmation, %{})
   end
 end

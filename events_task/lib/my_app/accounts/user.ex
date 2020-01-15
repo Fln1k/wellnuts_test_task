@@ -6,7 +6,7 @@ defmodule MyApp.Accounts.User do
   schema "users" do
     field(:email, :string)
     has_many(:events, MyApp.Content.Event)
-    has_many(:confirmations, MyApp.UserEventConfirmation.Confirmation)
+    has_many(:confirmations, MyApp.Content.Confirmation)
     timestamps()
   end
 

@@ -19,7 +19,7 @@
 <%= if Enum.member?(@user_email_list, @current_user.email) do %>
 Confirmed
 <% else %>
-<%= form_for @conn, confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>@event.id}), [method: :post], fn f -> %>
+<%= form_for @conn, confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>@event.id}), [method: :post], fn _f -> %>
 <%= submit "Save" %>
 <% end %>
 <% end %>

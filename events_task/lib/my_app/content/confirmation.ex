@@ -1,4 +1,4 @@
-defmodule MyApp.UserEventConfirmation.Confirmation do
+defmodule MyApp.Content.Confirmation do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -11,6 +11,7 @@ defmodule MyApp.UserEventConfirmation.Confirmation do
   def changeset(confirmation, attrs) do
     confirmation
     |> cast(attrs, [:user_id, :event_id])
+    |> unique_constraint(:user_event, name: :user_event)
     |> validate_required([:user_id, :event_id])
   end
 end

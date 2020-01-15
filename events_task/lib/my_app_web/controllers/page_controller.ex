@@ -1,7 +1,7 @@
 defmodule MyAppWeb.PageController do
   use MyAppWeb, :controller
   alias MyApp.Content
-  alias MyApp.UserEventConfirmation
+  alias MyApp.Content
   alias MyAppWeb.Guardian
   alias MyApp.Accounts
 
@@ -20,7 +20,7 @@ defmodule MyAppWeb.PageController do
     |> assign(:current_user, current_user)
     |> assign(
       :current_user_confirmations,
-      UserEventConfirmation.list_user_confirmed_event_ids(current_user)
+      Content.list_user_confirmed_event_ids(current_user)
     )
     |> assign(:changeset, changeset)
     |> render("index.html")

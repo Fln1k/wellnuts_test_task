@@ -21,20 +21,20 @@ defmodule MyAppWeb.Guardian do
   end
 
   @impl true
-  def deliver_magic_link(_user, magic_token, _opts) do
+  def deliver_magic_link(user, magic_token, _opts) do
     require Logger
     alias MyAppWeb.Endpoint
     import MyAppWeb.Router.Helpers
 
     MyApp.Email.login_link_email(
-      _user.email,
+      user.email,
       auth_url(Endpoint, :callback, magic_token)
     )
     |> MyApp.Mailer.deliver_now()
 
     Logger.info("""
     Email:
-      #{_user.email}
+      #{user.email}
     Link:
         #{auth_url(Endpoint, :callback, magic_token)}
     """)

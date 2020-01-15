@@ -1,13 +1,13 @@
 defmodule MyApp.Content.Event do
   use Ecto.Schema
   import Ecto.Changeset
-  alias MyApp.UserEventConfirmation.Confirmation
+  alias MyApp.Content.Confirmation
 
   schema "events" do
     field(:description, :string)
     field(:timestamp, :naive_datetime)
     belongs_to(:user, User)
-    has_many(:confirmations, MyApp.UserEventConfirmation.Confirmation)
+    has_many(:confirmations, MyApp.Content.Confirmation)
     timestamps()
   end
 

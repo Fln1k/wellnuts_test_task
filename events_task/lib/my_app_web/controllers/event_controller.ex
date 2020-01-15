@@ -2,9 +2,12 @@ defmodule MyAppWeb.EventController do
   use MyAppWeb, :controller
   alias MyApp.Content
   alias MyApp.Content.Event
-  alias MyApp.UserEventConfirmation
+  alias MyApp.Content
+  require Logger
 
-  def new(conn, _params) do
+  plug(:author_check when action in [:edit, :update])
+
+  def new(conn, params) do
     changeset = Content.change_event(%Event{})
 
     render(conn, "new.html",
@@ -18,13 +21,14 @@ defmodule MyAppWeb.EventController do
            Map.put(event_params, "user_id", Guardian.Plug.current_resource(conn).id)
          ) do
       {:ok, event} ->
-        MyAppWeb.ConfirmationController.create(
-          conn,
-          %{
-            "user_id" => Guardian.Plug.current_resource(conn).id,
-            "event_id" => event.id
-          }
-        )
+        Content.create_confirmation(%{
+          "user_id" => Guardian.Plug.current_resource(conn).id,
+          "event_id" => event.id
+        })
+
+        conn
+        |> put_flash(:info, "Event was created")
+        |> redirect(to: "/")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -37,26 +41,18 @@ defmodule MyAppWeb.EventController do
     render(conn, "show.html",
       event: event,
       current_user: Guardian.Plug.current_resource(conn),
-      user_email_list: UserEventConfirmation.user_email_list_by_event_id(event.id)
+      user_email_list: Content.user_email_list_by_event_id(event.id)
     )
   end
 
   def edit(conn, %{"id" => id}) do
     event = Content.get_event!(id)
-    changeset = Content.change_event(event)
-    current_user = Guardian.Plug.current_resource(conn)
 
-    if event.user_id == current_user.id do
-      render(conn, "edit.html",
-        event: event,
-        changeset: changeset,
-        current_user: current_user
-      )
-    else
-      conn
-      |> put_flash(:error, "No access to this action.")
-      |> redirect(to: "/")
-    end
+    render(conn, "edit.html",
+      event: event,
+      changeset: Content.change_event(event),
+      current_user: Guardian.Plug.current_resource(conn)
+    )
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
@@ -73,6 +69,16 @@ defmodule MyAppWeb.EventController do
           event: event,
           changeset: changeset
         )
+    end
+  end
+
+  def author_check(conn, params) do
+    if Guardian.Plug.current_resource(conn).id == params[:id] do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Access denied")
+      |> redirect(to: "/")
     end
   end
 end
