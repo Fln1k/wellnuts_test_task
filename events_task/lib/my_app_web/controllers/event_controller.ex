@@ -73,8 +73,9 @@ defmodule MyAppWeb.EventController do
   end
 
   def author_check(conn, _params) do
-    if Guardian.Plug.current_resource(conn).id ==
-         Content.get_event!(conn.path_params["id"]).user_id do
+    if Guardian.Plug.current_resource(conn) &&
+         Guardian.Plug.current_resource(conn).id ==
+           Content.get_event!(conn.path_params["id"]).user_id do
       conn
     else
       conn
