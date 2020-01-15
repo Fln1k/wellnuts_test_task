@@ -7,7 +7,7 @@ defmodule MyAppWeb.EventController do
 
   plug(:author_check when action in [:edit, :update])
 
-  def new(conn, params) do
+  def new(conn, _params) do
     changeset = Content.change_event(%Event{})
 
     render(conn, "new.html",
@@ -72,12 +72,13 @@ defmodule MyAppWeb.EventController do
     end
   end
 
-  def author_check(conn, params) do
-    if Guardian.Plug.current_resource(conn).id == params[:id] do
+  def author_check(conn, _params) do
+    if Guardian.Plug.current_resource(conn).id ==
+         Content.get_event!(conn.path_params["id"]).user_id do
       conn
     else
       conn
-      |> put_flash(:error, "Access denied")
+      |> put_flash(:error, "Denied")
       |> redirect(to: "/")
     end
   end
