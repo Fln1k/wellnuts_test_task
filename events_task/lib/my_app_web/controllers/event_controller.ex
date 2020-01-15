@@ -11,7 +11,7 @@ defmodule MyAppWeb.EventController do
     changeset = Content.change_event(%Event{})
 
     render(conn, "new.html",
-      changeset: changeset,
+      changeset: %{changeset | errors: []},
       current_user: Guardian.Plug.current_resource(conn)
     )
   end
