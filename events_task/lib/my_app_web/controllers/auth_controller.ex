@@ -33,7 +33,9 @@ defmodule MyAppWeb.AuthController do
         |> redirect(to: page_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "/", user: user, changeset: changeset)
+        conn
+        |> put_flash(:error, "this e-mail is already in use")
+        |> redirect(to: "/")
     end
   end
 
