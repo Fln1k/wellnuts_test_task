@@ -11,7 +11,7 @@ defmodule MyApp.Content.Confirmation do
   def changeset(confirmation, attrs) do
     confirmation
     |> cast(attrs, [:user_id, :event_id])
-    |> unique_constraint(:user_event, name: :user_event)
+    |> unique_constraint(:user_id, name: :user_event)
     |> validate_required([:user_id, :event_id])
   end
 end

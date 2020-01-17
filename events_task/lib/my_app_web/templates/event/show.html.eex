@@ -1,6 +1,10 @@
 <h1>Show Event</h1>
 <ul>
     <li>
+        <strong>ID:</strong>
+        <%= @event.id %>
+    </li>
+    <li>
         <strong>Description:</strong>
         <%= @event.description %>
     </li>

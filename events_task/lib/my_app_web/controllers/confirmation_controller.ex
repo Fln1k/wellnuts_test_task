@@ -18,9 +18,6 @@ defmodule MyAppWeb.ConfirmationController do
             conn
             |> put_flash(:info, "Confirmed successfully.")
             |> redirect(to: "/")
-
-          {:error, %Ecto.Changeset{} = changeset} ->
-            render(conn, "/", changeset: changeset)
         end
 
       confirmation ->

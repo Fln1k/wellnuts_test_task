@@ -33,8 +33,8 @@ config :my_app, MyApp.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "smtp.gmail.com",
   port: 587,
-  username: "",
-  password: "",
+  username: "sergeitrigubovfleps@gmail.com",
+  password: "saynotorasizm",
   # can be `:always` or `:never`
   tls: :if_available,
   # can be `true`

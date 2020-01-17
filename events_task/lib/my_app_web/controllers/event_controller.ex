@@ -6,6 +6,7 @@ defmodule MyAppWeb.EventController do
   require Logger
 
   plug(:authenticated when action in [:new, :create, :edit, :update])
+  plug(:get_event when action in [:edit, :update, :show])
   plug(:author_check when action in [:edit, :update])
 
   def new(conn, _params) do
@@ -29,15 +30,15 @@ defmodule MyAppWeb.EventController do
 
         conn
         |> put_flash(:info, "Event was created")
-        |> redirect(to: "/")
+        |> redirect(to: event_path(conn, :show, event))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    event = Content.get_event!(id)
+  def show(conn, params) do
+    event = conn.assigns[:event]
 
     render(conn, "show.html",
       event: event,
@@ -47,7 +48,7 @@ defmodule MyAppWeb.EventController do
   end
 
   def edit(conn, %{"id" => id}) do
-    event = Content.get_event!(id)
+    event = conn.assigns[:event]
 
     render(conn, "edit.html",
       event: event,
@@ -56,10 +57,10 @@ defmodule MyAppWeb.EventController do
     )
   end
 
-  def update(conn, %{"id" => id, "event" => event_params}) do
-    event = Content.get_event!(id)
+  def update(conn, params) do
+    event = conn.assigns[:event]
 
-    case Content.update_event(event, event_params) do
+    case Content.update_event(event, params["event"]) do
       {:ok, event} ->
         conn
         |> put_flash(:info, "Event updated successfully.")
@@ -75,12 +76,12 @@ defmodule MyAppWeb.EventController do
 
   def author_check(conn, _params) do
     if Guardian.Plug.current_resource(conn).id ==
-         Content.get_event!(conn.path_params["id"]).user_id do
+         conn.assigns[:event].user_id do
       conn
     else
       conn
       |> put_flash(:error, "Denied")
-      |> redirect(to: "/")
+      |> redirect(to: page_path(conn, :index))
       |> halt
     end
   end
@@ -91,8 +92,12 @@ defmodule MyAppWeb.EventController do
     else
       conn
       |> put_flash(:error, "Denied")
-      |> redirect(to: "/")
+      |> redirect(to: page_path(conn, :index))
       |> halt
     end
+  end
+
+  def get_event(conn, _params) do
+    conn = assign(conn, :event, Content.get_event!(conn.path_params["id"]))
   end
 end
