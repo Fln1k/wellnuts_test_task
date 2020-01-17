@@ -45,7 +45,7 @@ defmodule MyApp.EventControllerTest do
     end
 
     test "new event page" do
-      conn = get(build_conn(), event_path(build_conn(), :new))
+      conn = get(build_conn(), event_path(conn, :new))
       assert conn.path_info == ["events", "new"]
     end
 
@@ -53,7 +53,7 @@ defmodule MyApp.EventControllerTest do
       conn =
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
-        |> post(event_path(build_conn(), :create, %{"event" => @valid_attrs}))
+        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
 
       assert redirected_to(conn) =~ "/events/"
     end
@@ -63,7 +63,7 @@ defmodule MyApp.EventControllerTest do
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
         |> post(
-          event_path(build_conn(), :create, %{
+          event_path(conn, :create, %{
             "event" => @invalid_attrs
           })
         )
@@ -77,44 +77,9 @@ defmodule MyApp.EventControllerTest do
       conn =
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
-        |> get(event_path(build_conn(), :show, event.id))
+        |> get(event_path(conn, :show, event.id))
 
       assert response(conn, 200) =~ "<strong>Description:</strong>\n" <> event.description
-    end
-
-    test "edit event with not author user" do
-      user = create_test_user()
-      conn = build_conn()
-
-      id =
-        conn
-        |> Guardian.Plug.sign_in(user)
-        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
-        |> redirected_to()
-        |> String.slice(8..-1)
-
-      conn =
-        build_conn()
-        |> Guardian.Plug.sign_in(create_test_user(%{email: "sergeis@gmail.com"}))
-        |> put(
-          event_path(
-            conn,
-            :update,
-            struct(MyApp.Content.Event, %{
-              description: "UpdatedTestText",
-              id: id,
-              timestamp: %{
-                "day" => 1,
-                "hour" => "0",
-                "minute" => "0",
-                "month" => "1",
-                "year" => "2020"
-              }
-            })
-          )
-        )
-
-      assert redirected_to(conn) == page_path(conn, :index)
     end
 
     conn
@@ -218,6 +183,42 @@ defmodule MyApp.EventControllerTest do
         |> response(200)
 
       assert response =~ "<strong>Description:</strong>\nUpdatedTestText"
+    end
+
+    test "edit event with invalid params" do
+      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
+
+      id =
+        conn
+        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
+        |> redirected_to()
+        |> String.slice(8..-1)
+
+      response =
+        conn
+        |> put(
+          event_path(
+            conn,
+            :update,
+            id,
+            %{
+              "event" => %{
+                "description" => "",
+                "timestamp" => %{
+                  "day" => "1",
+                  "hour" => "0",
+                  "minute" => "0",
+                  "month" => "1",
+                  "year" => "2015"
+                }
+              }
+            }
+          )
+        )
+        |> get(event_path(conn, :show, id))
+        |> response(200)
+
+      assert response =~ "<strong>Description:</strong>\n" <> @valid_attrs["description"]
     end
   end
 end
