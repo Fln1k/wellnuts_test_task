@@ -19,17 +19,17 @@ defmodule MyApp.AccountsTest do
       user
     end
 
-    test "get user_list" do
+    test "get user" do
       user = create_test_user()
       assert Accounts.get_user(user.id) == user
     end
 
-    test "get user with valid params" do
+    test "get user list with valid params" do
       user = create_test_user()
       assert Accounts.list_users() == [user]
     end
 
-    test "create_user with valid data" do
+    test "create user with valid data" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
       assert user.email == "sergei@gmail.com"
     end
