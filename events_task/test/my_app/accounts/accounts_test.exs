@@ -19,38 +19,38 @@ defmodule MyApp.AccountsTest do
       user
     end
 
-    test "get user" do
+    test "successfully get user" do
       user = create_test_user()
       assert Accounts.get_user(user.id) == user
     end
 
-    test "get user list with valid params" do
+    test "successfully get user list with valid params" do
       user = create_test_user()
       assert Accounts.list_users() == [user]
     end
 
-    test "create user with valid data" do
+    test "successfully create user with valid params" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
       assert user.email == "sergei@gmail.com"
     end
 
-    test "create_user with invalid data" do
+    test "fails create_user with invalid params" do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
     end
 
-    test "update user with valid data" do
+    test "successfully update user with valid params" do
       user = create_test_user()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
       assert user.email == "sergei11@gmail.com"
     end
 
-    test "update user with invalid data" do
+    test "fails update user with invalid params" do
       user = create_test_user()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
     end
 
-    test "change user" do
+    test "successfully change user" do
       user = create_test_user()
       assert %Ecto.Changeset{} = Accounts.change_user(%{:email => user.email})
     end

@@ -33,7 +33,7 @@ defmodule MyApp.ConfirmationControllerTest do
       event
     end
 
-    test "create confirmation with valid params" do
+    test "successfully create confirmation with valid params" do
       event = create_test_event()
       user = create_test_user()
 
@@ -46,7 +46,7 @@ defmodule MyApp.ConfirmationControllerTest do
              }
     end
 
-    test "double confirmation" do
+    test "fails double confirmation" do
       event = create_test_event()
       user = create_test_user()
 

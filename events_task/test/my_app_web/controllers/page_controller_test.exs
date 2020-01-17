@@ -32,7 +32,7 @@ defmodule MyApp.PageControllerTest do
       user
     end
 
-    test "index" do
+    test "successfully open index.html and check confirmation" do
       event = create_test_event()
       user = create_test_user()
       Content.Event.confirm_event(%{"event_id" => event.id, "user_id" => user.id})

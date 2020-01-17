@@ -12,7 +12,7 @@ defmodule MyApp.AuthControllerTest do
       assert conn.method == "GET"
     end
 
-    test "create user with invalid params" do
+    test "fails create user with invalid params" do
       conn = build_conn()
 
       response =
@@ -23,7 +23,7 @@ defmodule MyApp.AuthControllerTest do
       assert response =~ "can&#39;t be blank"
     end
 
-    test "create user with valid params" do
+    test "successfully create user with valid params" do
       conn = build_conn()
 
       response =
@@ -34,14 +34,14 @@ defmodule MyApp.AuthControllerTest do
       assert response =~ "Please check your email for a link to sign in."
     end
 
-    test "login with valid magik link" do
+    test "authenticates successfully with valid magik link" do
       conn = build_conn()
       conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
       conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
       assert Guardian.Plug.current_resource(conn).email == @valid_email
     end
 
-    test "login with invalid magik link" do
+    test "fails authentication with invalid magik link" do
       conn = build_conn()
       conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
 
@@ -58,7 +58,7 @@ defmodule MyApp.AuthControllerTest do
       assert Guardian.Plug.current_resource(conn) == nil
     end
 
-    test "logout" do
+    test "lsuccessfully ogout" do
       conn = build_conn()
       conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
       conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
@@ -67,7 +67,7 @@ defmodule MyApp.AuthControllerTest do
       assert Guardian.Plug.current_resource(conn) == nil
     end
 
-    test "update user with valid params" do
+    test "successfully update user with valid params" do
       conn = build_conn()
 
       conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
@@ -79,7 +79,7 @@ defmodule MyApp.AuthControllerTest do
              }
     end
 
-    test "update user with invalid params(exsiting email)" do
+    test "fails update user with invalid params(exsiting email)" do
       conn = build_conn()
 
       %{email: "existing@gmail.com"}

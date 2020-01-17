@@ -44,12 +44,12 @@ defmodule MyApp.EventControllerTest do
       event
     end
 
-    test "new event page" do
+    test "successfully open new event page" do
       conn = get(build_conn(), event_path(conn, :new))
       assert conn.path_info == ["events", "new"]
     end
 
-    test "event creation with valid params" do
+    test "successfully event creation with valid params" do
       conn =
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
@@ -58,7 +58,7 @@ defmodule MyApp.EventControllerTest do
       assert redirected_to(conn) =~ "/events/"
     end
 
-    test "event creation with invalid params" do
+    test "fails event creation with invalid params" do
       conn =
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
@@ -71,7 +71,7 @@ defmodule MyApp.EventControllerTest do
       assert response(conn, 200) =~ "Oops, something went wrong! Please check the errors below."
     end
 
-    test "show event" do
+    test "successfully show event" do
       event = create_test_event()
 
       conn =
@@ -84,7 +84,7 @@ defmodule MyApp.EventControllerTest do
 
     conn
 
-    test "edit event with invalid user" do
+    test "fails edit event with invalid user" do
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
       id =
@@ -117,7 +117,7 @@ defmodule MyApp.EventControllerTest do
       assert redirected_to(conn) == page_path(conn, :index)
     end
 
-    test "edit event with unauthenticated user" do
+    test "fails edit event with unauthenticated user" do
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
       id =
@@ -149,7 +149,7 @@ defmodule MyApp.EventControllerTest do
       assert redirected_to(conn) == page_path(conn, :index)
     end
 
-    test "edit event with valid params" do
+    test "successfully edit event with valid params" do
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
       id =
@@ -185,7 +185,7 @@ defmodule MyApp.EventControllerTest do
       assert response =~ "<strong>Description:</strong>\nUpdatedTestText"
     end
 
-    test "edit event with invalid params" do
+    test "fails edit event with invalid params" do
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
       id =

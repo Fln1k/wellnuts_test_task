@@ -43,38 +43,38 @@ defmodule MyApp.ContentTest do
   end
 
   describe "content" do
-    test "create event with valid_attrs" do
+    test "successfully create event with valid_attrs" do
       assert {:ok, %Content.Event{} = event} = Content.create_event(@valid_attrs)
       assert event.description == "TestText"
     end
 
-    test "create event with invalid_attrs" do
+    test "fails create event with invalid_attrs" do
       assert {:error, _} = Content.create_event(@invalid_attrs)
     end
 
-    test "get event" do
+    test "successfully get event" do
       event = create_test_event()
       assert Content.get_event!(event.id).id == event.id
     end
 
-    test "update event with valid params" do
+    test "successfully update event with valid params" do
       event = create_test_event()
       Content.update_event(event, %{"description" => "asd"})
       Content.get_event!(event.id).description == "asd"
     end
 
-    test "delete event" do
+    test "successfully delete event" do
       event = create_test_event()
       assert {:ok, _} = Content.delete_event(event)
     end
 
-    test "update_event with invalid params" do
+    test "fails update event with invalid params" do
       event = create_test_event()
       Content.update_event(event, %{"description" => ""})
       Content.get_event!(event.id).description == @valid_attrs["description"]
     end
 
-    test "get confirmation list" do
+    test "successfully get confirmation list" do
       event = create_test_event()
       user = create_test_user()
 
@@ -84,14 +84,14 @@ defmodule MyApp.ContentTest do
       assert Content.list_confirmations() == [confirmation]
     end
 
-    test "get ids list of users confirmed event" do
+    test "successfully get ids list of users confirmed event" do
       event = create_test_event()
       user = create_test_user()
       Content.Event.confirm_event(%{"event_id" => event.id, "user_id" => user.id})
       Content.user_email_list_by_event_id(event.id) == [user.id]
     end
 
-    test "get confirmation with valid params" do
+    test "successfully get confirmation with valid params" do
       event = create_test_event()
       user = create_test_user()
 
