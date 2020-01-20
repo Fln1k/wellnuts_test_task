@@ -18,7 +18,7 @@ defmodule MyApp.ConfirmationControllerTest do
     def create_test_user(attrs \\ %{}) do
       {:ok, user} =
         attrs
-        |> Enum.into(%{email: "sergei@gmail.com"})
+        |> Enum.into(%{email: "sergei@example.com"})
         |> Accounts.create_user()
 
       user
@@ -41,9 +41,7 @@ defmodule MyApp.ConfirmationControllerTest do
         build_conn()
         |> post(confirmation_path(conn, :create, %{"event_id" => event.id, "user_id" => user.id}))
 
-      assert conn.private[:plug_session]["phoenix_flash"] == %{
-               "info" => "Confirmed successfully."
-             }
+      assert get_flash(conn, :error) == nil
     end
 
     test "fails double confirmation" do
@@ -54,9 +52,8 @@ defmodule MyApp.ConfirmationControllerTest do
         build_conn()
         |> post(confirmation_path(conn, :create, %{"event_id" => event.id, "user_id" => user.id}))
 
-      assert conn.private[:plug_session]["phoenix_flash"] == %{
-               "info" => "Confirmed successfully."
-             }
+      assert get_flash(conn, :error) == nil
+      clear_flash(conn)
 
       conn =
         post(
@@ -64,10 +61,7 @@ defmodule MyApp.ConfirmationControllerTest do
           confirmation_path(conn, :create, %{"event_id" => event.id, "user_id" => user.id})
         )
 
-      assert conn.private[:plug_session]["phoenix_flash"] == %{
-               "error" => "You already confirm",
-               "info" => "Confirmed successfully."
-             }
+      assert get_flash(conn, :error) != nil
     end
   end
 end

@@ -5,22 +5,13 @@ defmodule MyAppWeb.ConfirmationController do
   alias MyApp.Content.Confirmation
 
   def create(conn, params) do
-    case from(c in Confirmation,
-           where:
-             c.event_id == ^params["event_id"] and
-               c.user_id == ^params["user_id"],
-           select: c.event_id
-         )
-         |> Repo.one() do
-      nil ->
-        case MyApp.Content.create_confirmation(params) do
-          {:ok, _confirmation} ->
-            conn
-            |> put_flash(:info, "Confirmed successfully.")
-            |> redirect(to: "/")
-        end
+    case MyApp.Content.create_confirmation(params) do
+      {:ok, _confirmation} ->
+        conn
+        |> put_flash(:info, "Confirmed successfully.")
+        |> redirect(to: "/")
 
-      confirmation ->
+      {:error, _} ->
         conn
         |> put_flash(:error, "You already confirm")
         |> redirect(to: "/")

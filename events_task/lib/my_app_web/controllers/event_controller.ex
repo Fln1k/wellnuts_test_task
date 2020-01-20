@@ -43,7 +43,7 @@ defmodule MyAppWeb.EventController do
     render(conn, "show.html",
       event: event,
       current_user: Guardian.Plug.current_resource(conn),
-      user_email_list: Content.user_email_list_by_event_id(event.id)
+      user_list: Content.user_list_by_event_id(event.id)
     )
   end
 

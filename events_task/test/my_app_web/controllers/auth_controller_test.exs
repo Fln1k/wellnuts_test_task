@@ -1,15 +1,25 @@
 defmodule MyApp.AuthControllerTest do
   use MyAppWeb.ConnCase
+  alias MyApp.Accounts
+  alias MyAppWeb.Guardian
 
-  @valid_email "sergei@gmail.com"
+  @valid_email "sergei@example.com"
   @invalid_email ""
   @updated_email "sergeitrigubov@gmail.com"
 
   describe "users" do
+    def create_test_user(attrs \\ %{}) do
+      {:ok, user} =
+        attrs
+        |> Enum.into(%{email: "sergei@example.com"})
+        |> Accounts.create_user()
+
+      user
+    end
+
     test "new login page" do
       conn = get(build_conn(), auth_path(build_conn(), :new))
-      assert conn.path_info == ["login"]
-      assert conn.method == "GET"
+      assert response(conn, 200) =~ "<h1 class=\"page-header\">Login</h1>"
     end
 
     test "fails create user with invalid params" do
@@ -34,16 +44,18 @@ defmodule MyApp.AuthControllerTest do
       assert response =~ "Please check your email for a link to sign in."
     end
 
-    test "authenticates successfully with valid magik link" do
+    test "authenticates successfully with valid magic link" do
       conn = build_conn()
-      conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
-      conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
+      user = create_test_user()
+      {_, token, _} = Guardian.send_magic_link(user)
+      conn = get(conn, auth_path(conn, :callback, token))
       assert Guardian.Plug.current_resource(conn).email == @valid_email
     end
 
-    test "fails authentication with invalid magik link" do
+    test "fails authentication with invalid magic link" do
       conn = build_conn()
-      conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
+      user = create_test_user()
+      Guardian.send_magic_link(user)
 
       conn =
         get(
@@ -58,41 +70,30 @@ defmodule MyApp.AuthControllerTest do
       assert Guardian.Plug.current_resource(conn) == nil
     end
 
-    test "lsuccessfully ogout" do
-      conn = build_conn()
-      conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
-      conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
+    test "successfully logout" do
+      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
       assert Guardian.Plug.current_resource(conn) != nil
       conn = get(conn, auth_path(conn, :destroy))
       assert Guardian.Plug.current_resource(conn) == nil
     end
 
     test "successfully update user with valid params" do
-      conn = build_conn()
-
-      conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
-      conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
+      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
       conn = post(conn, auth_path(conn, :update, %{"user" => %{"email" => "Updated23mail.ru"}}))
 
-      assert conn.private[:plug_session]["phoenix_flash"] == %{
-               "info" => "User updated successfully."
-             }
+      assert get_flash(conn, :error) == nil
     end
 
     test "fails update user with invalid params(exsiting email)" do
       conn = build_conn()
+      MyApp.Accounts.create_user(%{email: "existing2@gmail.com"})
 
-      %{email: "existing@gmail.com"}
-      |> MyApp.Accounts.create_user()
+      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
-      conn = post(conn, auth_path(conn, :create, %{"user" => %{"email" => @valid_email}}))
-      conn = get(conn, auth_path(conn, :callback, conn.assigns[:token]))
+      conn =
+        post(conn, auth_path(conn, :update, %{"user" => %{"email" => "existing2@gmail.com"}}))
 
-      conn = post(conn, auth_path(conn, :update, %{"user" => %{"email" => "existing@gmail.com"}}))
-
-      assert conn.private[:plug_session]["phoenix_flash"] == %{
-               "error" => "this e-mail is already in use"
-             }
+      assert get_flash(conn, :error) != nil
     end
   end
 end

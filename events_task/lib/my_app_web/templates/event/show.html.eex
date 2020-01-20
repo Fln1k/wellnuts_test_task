@@ -20,7 +20,7 @@
 <span>
     <%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
 <% end %>
-<%= if Enum.member?(@user_email_list, @current_user.email) do %>
+<%= if Enum.member?(@user_list, @current_user) do %>
 Confirmed
 <% else %>
 <%= form_for @conn, confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>@event.id}), [method: :post], fn _f -> %>
@@ -29,7 +29,7 @@ Confirmed
 <% end %>
 <% end %>
 <h1 class="page-header">User list</h1>
-<%= for email <- @user_email_list do %>
-<%= email %>
+<%= for user <- @user_list do %>
+<%= user.email %>
 <hr>
 <% end %>

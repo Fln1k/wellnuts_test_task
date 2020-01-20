@@ -29,7 +29,7 @@ defmodule MyApp.EventControllerTest do
     def create_test_user(attrs \\ %{}) do
       {:ok, user} =
         attrs
-        |> Enum.into(%{email: "sergei@gmail.com"})
+        |> Enum.into(%{email: "sergei@example.com"})
         |> Accounts.create_user()
 
       user
@@ -82,16 +82,10 @@ defmodule MyApp.EventControllerTest do
       assert response(conn, 200) =~ "<strong>Description:</strong>\n" <> event.description
     end
 
-    conn
-
     test "fails edit event with invalid user" do
-      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
-
-      id =
-        conn
-        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
-        |> redirected_to()
-        |> String.slice(8..-1)
+      user = create_test_user()
+      conn = build_conn() |> Guardian.Plug.sign_in(user)
+      event = create_test_event(%{"user_id" => user.id})
 
       conn =
         build_conn()
@@ -100,9 +94,9 @@ defmodule MyApp.EventControllerTest do
           event_path(
             conn,
             :update,
-            struct(MyApp.Content.Event, %{
+            %MyApp.Content.Event{
               description: "UpdatedTestText",
-              id: id,
+              id: event.id,
               timestamp: %{
                 "day" => 1,
                 "hour" => "0",
@@ -110,7 +104,7 @@ defmodule MyApp.EventControllerTest do
                 "month" => "1",
                 "year" => "2020"
               }
-            })
+            }
           )
         )
 
@@ -118,13 +112,9 @@ defmodule MyApp.EventControllerTest do
     end
 
     test "fails edit event with unauthenticated user" do
-      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
-
-      id =
-        conn
-        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
-        |> redirected_to()
-        |> String.slice(8..-1)
+      user = create_test_user()
+      conn = build_conn() |> Guardian.Plug.sign_in(user)
+      event = create_test_event(%{"user_id" => user.id})
 
       conn =
         build_conn()
@@ -134,7 +124,7 @@ defmodule MyApp.EventControllerTest do
             :update,
             struct(MyApp.Content.Event, %{
               description: "UpdatedTestText",
-              id: id,
+              id: event.id,
               timestamp: %{
                 "day" => "1",
                 "hour" => "0",
@@ -150,13 +140,9 @@ defmodule MyApp.EventControllerTest do
     end
 
     test "successfully edit event with valid params" do
-      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
-
-      id =
-        conn
-        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
-        |> redirected_to()
-        |> String.slice(8..-1)
+      user = create_test_user()
+      conn = build_conn() |> Guardian.Plug.sign_in(user)
+      event = create_test_event(%{"user_id" => user.id})
 
       response =
         conn
@@ -164,7 +150,7 @@ defmodule MyApp.EventControllerTest do
           event_path(
             conn,
             :update,
-            id,
+            event.id,
             %{
               "event" => %{
                 "description" => "UpdatedTestText",
@@ -179,20 +165,16 @@ defmodule MyApp.EventControllerTest do
             }
           )
         )
-        |> get(event_path(conn, :show, id))
+        |> get(event_path(conn, :show, event.id))
         |> response(200)
 
       assert response =~ "<strong>Description:</strong>\nUpdatedTestText"
     end
 
     test "fails edit event with invalid params" do
-      conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
-
-      id =
-        conn
-        |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
-        |> redirected_to()
-        |> String.slice(8..-1)
+      user = create_test_user()
+      conn = build_conn() |> Guardian.Plug.sign_in(user)
+      event = create_test_event(%{"user_id" => user.id})
 
       response =
         conn
@@ -200,7 +182,7 @@ defmodule MyApp.EventControllerTest do
           event_path(
             conn,
             :update,
-            id,
+            event.id,
             %{
               "event" => %{
                 "description" => "",
@@ -215,7 +197,7 @@ defmodule MyApp.EventControllerTest do
             }
           )
         )
-        |> get(event_path(conn, :show, id))
+        |> get(event_path(conn, :show, event.id))
         |> response(200)
 
       assert response =~ "<strong>Description:</strong>\n" <> @valid_attrs["description"]

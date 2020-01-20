@@ -5,7 +5,7 @@ defmodule MyApp.Content do
   alias MyApp.Content.Confirmation
   alias MyApp.Accounts.User
 
-  def list_events do
+  def list_events_api do
     query =
       from(event in Event,
         join: user in User,
@@ -13,13 +13,17 @@ defmodule MyApp.Content do
         select: %{
           id: event.id,
           description: event.description,
-          time: event.timestamp,
+          timestamp: event.timestamp,
           author_id: event.user_id,
           author_email: user.email
         }
       )
 
     Repo.all(query)
+  end
+
+  def list_events do
+    Repo.all(Event)
   end
 
   def get_event!(id), do: Repo.get!(Event, id)
@@ -60,11 +64,11 @@ defmodule MyApp.Content do
     end
   end
 
-  def user_email_list_by_event_id(event_id) do
+  def user_list_by_event_id(event_id) do
     from(u in User,
       join: c in assoc(u, :confirmations),
       where: c.event_id == ^event_id,
-      select: u.email
+      select: u
     )
     |> Repo.all()
   end

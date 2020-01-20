@@ -13,8 +13,7 @@ defmodule MyAppWeb.AuthController do
   def create(conn, %{"user" => %{"email" => email}}) do
     case Accounts.get_or_create_by_email(email) do
       {:ok, user} ->
-        {:ok, token, _} = Guardian.send_magic_link(user)
-        conn = assign(conn, :token, token)
+        {:ok, _, _} = Guardian.send_magic_link(user)
         render(conn, "create.html")
 
       {:error, changeset} ->

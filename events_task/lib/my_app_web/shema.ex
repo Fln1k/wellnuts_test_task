@@ -11,6 +11,14 @@ defmodule MyAppWeb.Schema do
     field(:description, non_null(:string))
     field(:author_id, non_null(:string))
     field(:author_email, non_null(:string))
+
+    field(:confirmed_users_email, non_null(list_of(non_null(:user)))) do
+      resolve(&EventsResolver.event_confirmed_users_email_list/3)
+    end
+  end
+
+  object :user do
+    field(:email, non_null(:string))
   end
 
   query do
