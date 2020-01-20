@@ -28,4 +28,18 @@ defmodule MyAppWeb.Router do
     post("/login", AuthController, :create)
     get("/login/:magic_token", AuthController, :callback)
   end
+
+  pipeline :api do
+    plug(:accepts, ["json"])
+  end
+
+  scope "/" do
+    pipe_through(:api)
+
+    forward("/api", Absinthe.Plug.GraphiQL,
+      schema: MyAppWeb.Schema,
+      interface: :simple,
+      context: %{pubsub: MyAppWeb.Endpoint}
+    )
+  end
 end

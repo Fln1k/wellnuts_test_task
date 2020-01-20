@@ -6,7 +6,20 @@ defmodule MyApp.Content do
   alias MyApp.Accounts.User
 
   def list_events do
-    Repo.all(Event)
+    query =
+      from(event in Event,
+        join: user in User,
+        on: event.user_id == user.id,
+        select: %{
+          id: event.id,
+          description: event.description,
+          time: event.timestamp,
+          author_id: event.user_id,
+          author_email: user.email
+        }
+      )
+
+    Repo.all(query)
   end
 
   def get_event!(id), do: Repo.get!(Event, id)
