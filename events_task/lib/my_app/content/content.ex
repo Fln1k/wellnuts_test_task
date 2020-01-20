@@ -22,6 +22,24 @@ defmodule MyApp.Content do
     Repo.all(query)
   end
 
+  def get_event_api(id) do
+    query =
+      from(event in Event,
+        join: user in User,
+        on: event.user_id == user.id,
+        where: event.id == ^id,
+        select: %{
+          id: event.id,
+          description: event.description,
+          timestamp: event.timestamp,
+          author_id: event.user_id,
+          author_email: user.email
+        }
+      )
+
+    Repo.one(query)
+  end
+
   def list_events do
     Repo.all(Event)
   end
@@ -50,6 +68,14 @@ defmodule MyApp.Content do
 
   def list_confirmations do
     Repo.all(Confirmation)
+  end
+
+  def event_confirmations_list(id) do
+    from(c in Confirmation,
+      where: c.event_id == ^id,
+      select: c
+    )
+    |> Repo.all()
   end
 
   def list_user_confirmed_event_ids(user) do
