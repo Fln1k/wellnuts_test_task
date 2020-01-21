@@ -6,7 +6,7 @@ defmodule MyAppWeb.UsersResolver do
     {:ok, users}
   end
 
-  def list_users_confrimed_event(_root, _args, _info) do
+  def list_users_confirmed_event(_root, _args, _info) do
     users = MyApp.Content.list_users_confirmed_event(_root.id)
     {:ok, users}
   end
@@ -41,7 +41,7 @@ defmodule MyAppWeb.UsersResolver do
 
   def create_user(_root, args, _info) do
     case Accounts.get_or_create_by_email(args.email) do
-      nil -> "User with #{args} not created!"
+      {:error, changeset} -> {:error, "User not created"}
       user -> user
     end
   end

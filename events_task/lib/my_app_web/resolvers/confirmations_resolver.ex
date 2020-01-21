@@ -28,8 +28,8 @@ defmodule MyAppWeb.ConfirmationsResolver do
       confirmation ->
         confirmation
 
-      nil ->
-        {:error, "Confirmation not created!"}
+      {:error, changeset} ->
+        {:error, "Confirmation not created"}
     end
   end
 end

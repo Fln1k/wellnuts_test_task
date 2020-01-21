@@ -79,7 +79,7 @@ defmodule MyApp.AuthControllerTest do
 
     test "successfully update user with valid params" do
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
-      conn = post(conn, auth_path(conn, :update, %{"user" => %{"email" => "Updated23mail.ru"}}))
+      conn = post(conn, auth_path(conn, :update, %{"user" => %{"email" => "updated23@mail.ru"}}))
 
       assert get_flash(conn, :error) == nil
     end

@@ -18,7 +18,7 @@ defmodule MyAppWeb.EventsResolver do
     end
   end
 
-  def find_event_by_confirmation(%{event_id: id}, _info) do
+  def find_event_by_confirmation(%{event_id: id}, _args, _info) do
     case Content.get_event!(id) do
       nil -> {:error, "Event id #{id} not found!"}
       event -> {:ok, event}
@@ -41,8 +41,8 @@ defmodule MyAppWeb.EventsResolver do
 
         {:ok, event}
 
-      nil ->
-        {:error, "Event not created!"}
+      {:error, changeset} ->
+        {:error, "Event not created"}
     end
   end
 end

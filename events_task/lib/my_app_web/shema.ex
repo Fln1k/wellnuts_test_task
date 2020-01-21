@@ -50,7 +50,7 @@ defmodule MyAppWeb.Schema do
     field(:user_id, non_null(:id))
 
     field(:event, non_null(:event)) do
-      resolve(&EventsResolver.find_event/3)
+      resolve(&EventsResolver.find_event_by_confirmation/3)
     end
 
     field(:user, non_null(:user)) do
