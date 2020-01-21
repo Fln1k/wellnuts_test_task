@@ -1,6 +1,8 @@
 defmodule MyAppWeb.UsersResolver do
+  alias MyApp.Accounts
+
   def all_users(_root, _args, _info) do
-    users = MyApp.Accounts.list_users()
+    users = Accounts.list_users()
     {:ok, users}
   end
 
@@ -10,30 +12,37 @@ defmodule MyAppWeb.UsersResolver do
   end
 
   def find_user(params, _info) do
-    case MyApp.Accounts.get_user(params) do
+    case Accounts.get_user(params) do
       nil -> {:error, "User with params #{params} not found!"}
       user -> {:ok, user}
     end
   end
 
   def find_user_by_email(%{email: email}, _info) do
-    case MyApp.Accounts.get_user_by_email(email) do
+    case Accounts.get_user_by_email(email) do
       nil -> {:error, "User email #{email} not found!"}
       user -> {:ok, user}
     end
   end
 
   def find_user_by_confirmation(%{user_id: id}, _info) do
-    case MyApp.Accounts.get_user(id) do
+    case Accounts.get_user(id) do
       nil -> {:error, "User id #{id} not found!"}
       user -> {:ok, user}
     end
   end
 
-  def find_author(_root, _args, _info) do
-    case MyApp.Accounts.get_user(_root.user_id) do
-      nil -> {:error, "User id #{_root.user_id} not found!"}
+  def find_author(root, _args, _info) do
+    case Accounts.get_user(root.user_id) do
+      nil -> {:error, "User id #{root.user_id} not found!"}
       user -> {:ok, user}
+    end
+  end
+
+  def create_user(_root, args, _info) do
+    case Accounts.get_or_create_by_email(args.email) do
+      nil -> "User with #{args} not created!"
+      user -> user
     end
   end
 end

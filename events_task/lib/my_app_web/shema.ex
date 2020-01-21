@@ -12,6 +12,7 @@ defmodule MyAppWeb.Schema do
     field(:timestamp, non_null(:naive_datetime))
     field(:time, non_null(:string))
     field(:description, non_null(:string))
+    field(:user_id, non_null(:string))
 
     field(:author, non_null(:user)) do
       resolve(&UsersResolver.find_author/3)
@@ -58,32 +59,52 @@ defmodule MyAppWeb.Schema do
   end
 
   query do
-    field(:events, non_null(list_of(non_null(:event)))) do
+    field(:get_events, non_null(list_of(non_null(:event)))) do
       resolve(&EventsResolver.all_events/3)
     end
 
-    field(:event, :event) do
+    field(:get_event, :event) do
       arg(:id, non_null(:id))
       resolve(&EventsResolver.find_event/2)
     end
 
-    field(:user, :user) do
+    field(:get_user, :user) do
       arg(:id, :id)
       arg(:email, :string)
       resolve(&UsersResolver.find_user/2)
     end
 
-    field(:users, non_null(list_of(non_null(:user)))) do
+    field(:get_users, non_null(list_of(non_null(:user)))) do
       resolve(&UsersResolver.all_users/3)
     end
 
-    field(:confirmation, :confirmation) do
+    field(:get_confirmation, :confirmation) do
       arg(:id, non_null(:id))
       resolve(&ConfirmationsResolver.find_confirmation/2)
     end
 
-    field(:confirmations, non_null(list_of(non_null(:confirmation)))) do
+    field(:get_confirmations, non_null(list_of(non_null(:confirmation)))) do
       resolve(&ConfirmationsResolver.all_confirmations/3)
+    end
+  end
+
+  mutation do
+    field(:create_user, :user) do
+      arg(:email, non_null(:string))
+      resolve(&UsersResolver.create_user/3)
+    end
+
+    field(:create_event, :event) do
+      arg(:description, non_null(:string))
+      arg(:timestamp, non_null(:naive_datetime))
+      arg(:user_id, non_null(:id))
+      resolve(&EventsResolver.create_event/3)
+    end
+
+    field(:create_confirmation, :confirmation) do
+      arg(:user_id, non_null(:id))
+      arg(:event_id, non_null(:id))
+      resolve(&ConfirmationsResolver.create_confirmation/3)
     end
   end
 end

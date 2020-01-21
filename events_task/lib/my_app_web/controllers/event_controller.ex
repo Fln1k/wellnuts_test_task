@@ -20,7 +20,7 @@ defmodule MyAppWeb.EventController do
 
   def create(conn, %{"event" => event_params}) do
     case Content.create_event(
-           Map.put(event_params, "user_id", Guardian.Plug.current_resource(conn).id)
+           Map.put_new(event_params, "user_id", Guardian.Plug.current_resource(conn).id)
          ) do
       {:ok, event} ->
         Content.create_confirmation(%{

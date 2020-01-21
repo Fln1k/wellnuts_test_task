@@ -8,11 +8,11 @@ defmodule MyApp.Accounts do
     Repo.all(User)
   end
 
-  def get_user(param) when is_map(param) == false do
+  def get_user(param) when not is_map(param) do
     Repo.get(User, param)
   end
 
-  def get_user(param) when is_map(param) == true do
+  def get_user(param) when is_map(param) do
     case Enum.at(Map.keys(param), 0) do
       :id -> Repo.get_by(User, id: param[:id])
       :email -> Repo.get_by(User, email: param[:email])
