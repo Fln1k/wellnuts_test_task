@@ -1,23 +1,30 @@
 defmodule MyAppWeb.EventsResolver do
   def all_events(_root, _args, _info) do
-    events = MyApp.Content.list_events_api()
+    events = MyApp.Content.list_events()
     {:ok, events}
   end
 
-  def event_confirmed_users_list_by_event_id(_root, _args, _info) do
-    users = MyApp.Content.user_list_by_event_id(_root.id)
-    {:ok, users}
-  end
-
-  def event_confirmations_list_by_event_id(_root, _args, _info) do
-    confirmations = MyApp.Content.event_confirmations_list(_root.id)
-    {:ok, confirmations}
+  def list_events_confirmed_by_user(_root, _args, _info) do
+    events = MyApp.Content.list_events_confirmed(_root)
+    {:ok, events}
   end
 
   def find_event(%{id: id}, _info) do
-    case MyApp.Content.get_event_api(id) do
+    case MyApp.Content.get_event!(id) do
       nil -> {:error, "Event id #{id} not found!"}
       event -> {:ok, event}
     end
+  end
+
+  def find_event_by_confirmation(%{event_id: id}, _info) do
+    case MyApp.Content.get_event!(id) do
+      nil -> {:error, "Event id #{id} not found!"}
+      event -> {:ok, event}
+    end
+  end
+
+  def list_events_by_author_id(_root, _args, _info) do
+    events = MyApp.Content.list_events_by_author_id(_root.id)
+    {:ok, events}
   end
 end

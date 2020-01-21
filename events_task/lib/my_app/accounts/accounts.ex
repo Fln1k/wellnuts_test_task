@@ -1,8 +1,4 @@
 defmodule MyApp.Accounts do
-  @moduledoc """
-  The Accounts context.
-  """
-
   import Ecto.Query, warn: false
   alias MyApp.Repo
 
@@ -12,8 +8,15 @@ defmodule MyApp.Accounts do
     Repo.all(User)
   end
 
-  def get_user(id) do
-    Repo.get(User, id)
+  def get_user(param) when is_map(param) == false do
+    Repo.get(User, param)
+  end
+
+  def get_user(param) when is_map(param) == true do
+    case Enum.at(Map.keys(param), 0) do
+      :id -> Repo.get_by(User, id: param[:id])
+      :email -> Repo.get_by(User, email: param[:email])
+    end
   end
 
   def get_or_create_by_email(email) do

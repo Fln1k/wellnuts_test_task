@@ -5,41 +5,6 @@ defmodule MyApp.Content do
   alias MyApp.Content.Confirmation
   alias MyApp.Accounts.User
 
-  def list_events_api do
-    query =
-      from(event in Event,
-        join: user in User,
-        on: event.user_id == user.id,
-        select: %{
-          id: event.id,
-          description: event.description,
-          timestamp: event.timestamp,
-          author_id: event.user_id,
-          author_email: user.email
-        }
-      )
-
-    Repo.all(query)
-  end
-
-  def get_event_api(id) do
-    query =
-      from(event in Event,
-        join: user in User,
-        on: event.user_id == user.id,
-        where: event.id == ^id,
-        select: %{
-          id: event.id,
-          description: event.description,
-          timestamp: event.timestamp,
-          author_id: event.user_id,
-          author_email: user.email
-        }
-      )
-
-    Repo.one(query)
-  end
-
   def list_events do
     Repo.all(Event)
   end
@@ -70,7 +35,15 @@ defmodule MyApp.Content do
     Repo.all(Confirmation)
   end
 
-  def event_confirmations_list(id) do
+  def list_confirmations_by_user(id) do
+    from(c in Confirmation,
+      where: c.user_id == ^id,
+      select: c
+    )
+    |> Repo.all()
+  end
+
+  def list_confirmations_by_event(id) do
     from(c in Confirmation,
       where: c.event_id == ^id,
       select: c
@@ -78,11 +51,21 @@ defmodule MyApp.Content do
     |> Repo.all()
   end
 
-  def list_user_confirmed_event_ids(user) do
+  def list_events_by_author_id(id) do
+    from(e in Event,
+      where: e.user_id == ^id,
+      select: e
+    )
+    |> Repo.all()
+  end
+
+  def list_events_confirmed(user) do
     if user do
-      from(c in Confirmation,
+      from(e in Event,
+        join: c in Confirmation,
+        on: c.event_id == e.id,
         where: c.user_id == ^user.id,
-        select: c.event_id
+        select: e
       )
       |> Repo.all()
     else
@@ -90,7 +73,7 @@ defmodule MyApp.Content do
     end
   end
 
-  def user_list_by_event_id(event_id) do
+  def list_users_confirmed_event(event_id) do
     from(u in User,
       join: c in assoc(u, :confirmations),
       where: c.event_id == ^event_id,

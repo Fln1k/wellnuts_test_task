@@ -20,7 +20,7 @@ defmodule MyAppWeb.PageController do
     |> assign(:current_user, current_user)
     |> assign(
       :current_user_confirmations,
-      Content.list_user_confirmed_event_ids(current_user)
+      for(%{id: id} <- Content.list_events_confirmed(current_user), do: id)
     )
     |> assign(:changeset, changeset)
     |> render("index.html")

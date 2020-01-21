@@ -88,7 +88,7 @@ defmodule MyApp.ContentTest do
       event = create_test_event()
       user = create_test_user()
       Content.Event.confirm_event(%{"event_id" => event.id, "user_id" => user.id})
-      Content.user_email_list_by_event_id(event.id) == [user.id]
+      Content.list_users_confirmed_event(event.id) == [user]
     end
 
     test "successfully get confirmation with valid params" do

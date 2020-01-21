@@ -2,12 +2,6 @@ defmodule Absinthe.Type.Custom do
   use Absinthe.Schema.Notation
 
   scalar :naive_datetime, name: "NaiveDateTime" do
-    description("""
-    The `Naive DateTime` scalar type represents a naive date and time without
-    timezone. The DateTime appears in a JSON response as an ISO8601 formatted
-    string.
-    """)
-
     serialize(&NaiveDateTime.to_iso8601/1)
     parse(&parse_naive_datetime/1)
   end
