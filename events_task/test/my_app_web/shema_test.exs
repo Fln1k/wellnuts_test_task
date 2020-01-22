@@ -178,8 +178,8 @@ defmodule MyApp.SchemaTest do
              "errors" => [
                %{
                  "locations" => [%{"column" => 0, "line" => 2}],
-                 "message" => "Event not created",
-                 "path" => ["createEvent"]
+                 "path" => ["createEvent"],
+                 "message" => "can't be blank, Confirmation not created"
                }
              ]
            }
@@ -428,6 +428,145 @@ defmodule MyApp.SchemaTest do
                  "id" => "#{Enum.at(event_info["confirmations"], 0)["id"]}"
                }
              }
+           }
+  end
+
+  test "fails query: create 2 confirmations with same params", %{conn: conn} do
+    user = create_test_user()
+    event = create_test_event(%{"user_id" => user.id})
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        mutation{
+        createConfirmation(eventId: #{event.id},userId:#{event.user_id})
+        {
+          eventId
+          userId
+        }
+        }
+
+
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{
+               "createConfirmation" => %{"eventId" => "#{event.id}", "userId" => "#{user.id}"}
+             }
+           }
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        mutation{
+        createConfirmation(eventId: #{event.id},userId:#{event.user_id})
+        {
+          eventId
+          userId
+        }
+        }
+
+
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"createConfirmation" => nil},
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 0, "line" => 2}],
+                 "message" => "has already been taken, Confirmation not created",
+                 "path" => ["createConfirmation"]
+               }
+             ]
+           }
+  end
+
+  test "fails query: create event with invalid user_id param", %{conn: conn} do
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        mutation{
+        createEvent(description: "sad" timestamp: "2015-01-01T00:00:00.000000" userId: -1)
+        {
+        user_id
+        }
+        }
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"createEvent" => nil},
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 0, "line" => 2}],
+                 "message" => "User don't exist, Confirmation not created",
+                 "path" => ["createEvent"]
+               }
+             ]
+           }
+  end
+
+  test "fails query: creaete confirmation with invalid user_id param", %{conn: conn} do
+    user = create_test_user()
+    event = create_test_event(%{"user_id" => user.id})
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        mutation{
+        createConfirmation(eventId: #{event.id},userId: -1)
+        {
+          eventId
+          userId
+        }
+        }
+
+
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"createConfirmation" => nil},
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 0, "line" => 2}],
+                 "message" => "User don't exist, Confirmation not created",
+                 "path" => ["createConfirmation"]
+               }
+             ]
+           }
+  end
+
+  test "fails query: creaete confirmation with invalid event_id param", %{conn: conn} do
+    user = create_test_user()
+    event = create_test_event(%{"user_id" => user.id})
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        mutation{
+        createConfirmation(eventId: -1,userId: #{event.user_id})
+        {
+          eventId
+          userId
+        }
+        }
+
+
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"createConfirmation" => nil},
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 0, "line" => 2}],
+                 "message" => "Event don't exist, Confirmation not created",
+                 "path" => ["createConfirmation"]
+               }
+             ]
            }
   end
 end
