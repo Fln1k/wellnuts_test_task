@@ -12,12 +12,8 @@ defmodule MyApp.Accounts do
     Repo.get(User, param)
   end
 
-  def get_user(param) when is_map(param) do
-    case Enum.at(Map.keys(param), 0) do
-      :id -> Repo.get_by(User, id: param[:id])
-      :email -> Repo.get_by(User, email: param[:email])
-    end
-  end
+  def get_user(id) when is_integer(id), do: Repo.get(User, id)
+  def get_user(params) when is_map(params), do: Repo.get_by(User, params)
 
   def get_or_create_by_email(email) do
     case Repo.get_by(User, email: email) do

@@ -73,7 +73,7 @@ defmodule MyApp.SchemaTest do
            }
   end
 
-  test "successfully query: get_user by email", %{conn: conn} do
+  test "successfully query: get user by email", %{conn: conn} do
     user = create_test_user()
 
     conn =
@@ -93,7 +93,7 @@ defmodule MyApp.SchemaTest do
            }
   end
 
-  test "successfully query: get_user by id", %{conn: conn} do
+  test "successfully query: get user by id", %{conn: conn} do
     user = create_test_user()
 
     conn =
@@ -113,7 +113,67 @@ defmodule MyApp.SchemaTest do
            }
   end
 
-  test "successfully query: get_users", %{conn: conn} do
+  test "successfully query: get user by id and email", %{conn: conn} do
+    user = create_test_user()
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        query{
+        getUser(id: "#{user.id}", email: "#{user.email}")
+        {
+          email
+        }
+        }
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"getUser" => %{"email" => user.email}}
+           }
+  end
+
+  test "fails query: get user by invalid id and valid email", %{conn: conn} do
+    user = create_test_user()
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        query{
+        getUser(id: "-1", email: "#{user.email}")
+        {
+          email
+        }
+        }
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"getUser" => nil}
+           }
+  end
+
+  test "fails query: get user by valid id and invalid email", %{conn: conn} do
+    user = create_test_user()
+
+    conn =
+      post(conn, "/api", %{
+        "query" => """
+        query{
+        getUser(id: "#{user.id}", email: "someinvalidemail@example.com")
+        {
+          email
+        }
+        }
+        """
+      })
+
+    assert json_response(conn, 200) == %{
+             "data" => %{"getUser" => nil}
+           }
+  end
+
+  test "successfully query: get users", %{conn: conn} do
     user_1 = create_test_user()
     user_2 = create_test_user(%{:email => "someother@example.com"})
 

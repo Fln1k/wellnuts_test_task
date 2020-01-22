@@ -5,7 +5,7 @@ defmodule MyApp.AuthControllerTest do
 
   @valid_email "sergei@example.com"
   @invalid_email ""
-  @updated_email "sergeitrigubov@gmail.com"
+  @updated_email "sergeitrigubov@example.com"
 
   describe "users" do
     def create_test_user(attrs \\ %{}) do
@@ -86,12 +86,12 @@ defmodule MyApp.AuthControllerTest do
 
     test "fails update user with invalid params(exsiting email)" do
       conn = build_conn()
-      MyApp.Accounts.create_user(%{email: "existing2@gmail.com"})
+      MyApp.Accounts.create_user(%{email: "existing2@example.com"})
 
       conn = build_conn() |> Guardian.Plug.sign_in(create_test_user())
 
       conn =
-        post(conn, auth_path(conn, :update, %{"user" => %{"email" => "existing2@gmail.com"}}))
+        post(conn, auth_path(conn, :update, %{"user" => %{"email" => "existing2@example.com"}}))
 
       assert get_flash(conn, :error) != nil
     end

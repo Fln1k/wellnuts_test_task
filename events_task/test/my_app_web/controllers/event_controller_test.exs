@@ -50,11 +50,14 @@ defmodule MyApp.EventControllerTest do
     end
 
     test "successfully event creation with valid params" do
+      assert MyApp.Repo.all(Content.Event) == []
+
       conn =
         build_conn()
         |> Guardian.Plug.sign_in(create_test_user())
         |> post(event_path(conn, :create, %{"event" => @valid_attrs}))
 
+      assert MyApp.Repo.all(Content.Event) != []
       assert redirected_to(conn) =~ "/events/"
     end
 
@@ -89,7 +92,7 @@ defmodule MyApp.EventControllerTest do
 
       conn =
         build_conn()
-        |> Guardian.Plug.sign_in(create_test_user(%{email: "sergeis@gmail.com"}))
+        |> Guardian.Plug.sign_in(create_test_user(%{email: "sergeis@example.com"}))
         |> put(
           event_path(
             conn,

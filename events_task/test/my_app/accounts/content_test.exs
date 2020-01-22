@@ -36,7 +36,7 @@ defmodule MyApp.ContentTest do
   def create_test_user(attrs \\ %{}) do
     {:ok, user} =
       attrs
-      |> Enum.into(%{email: "sergei@gmail.com"})
+      |> Enum.into(%{email: "sergei@example.com"})
       |> Accounts.create_user()
 
     user

@@ -37,24 +37,21 @@ defmodule MyApp.Content do
 
   def list_confirmations_by_user(id) do
     from(c in Confirmation,
-      where: c.user_id == ^id,
-      select: c
+      where: c.user_id == ^id
     )
     |> Repo.all()
   end
 
   def list_confirmations_by_event(id) do
     from(c in Confirmation,
-      where: c.event_id == ^id,
-      select: c
+      where: c.event_id == ^id
     )
     |> Repo.all()
   end
 
   def list_events_by_author_id(id) do
     from(e in Event,
-      where: e.user_id == ^id,
-      select: e
+      where: e.user_id == ^id
     )
     |> Repo.all()
   end
@@ -62,8 +59,7 @@ defmodule MyApp.Content do
   def list_events_confirmed(user) do
     if user do
       from(e in Event,
-        join: c in Confirmation,
-        on: c.event_id == e.id,
+        join: c in assoc(e, :confirmations),
         where: c.user_id == ^user.id,
         select: e
       )

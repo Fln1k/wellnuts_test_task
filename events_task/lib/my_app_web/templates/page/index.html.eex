@@ -58,7 +58,6 @@
             <%= if Enum.member?(@current_user_confirmations, event.id) do %>
             Confirmed
             <% else %>
-            <%IO.inspect(@current_user_confirmations) %>
             <%= form_for @conn, confirmation_path(@conn,:create,%{"user_id"=>@current_user.id, "event_id"=>event.id}), [method: :post], fn f -> %>
                     <%= submit "Save" %>
             <% end %>

@@ -53,7 +53,6 @@ defmodule MyApp.ConfirmationControllerTest do
         |> post(confirmation_path(conn, :create, %{"event_id" => event.id, "user_id" => user.id}))
 
       assert get_flash(conn, :error) == nil
-      clear_flash(conn)
 
       conn =
         post(

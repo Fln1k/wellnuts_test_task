@@ -6,8 +6,8 @@ defmodule MyApp.AccountsTest do
   describe "users" do
     alias MyApp.Accounts.User
 
-    @valid_attrs %{email: "sergei@gmail.com"}
-    @update_attrs %{email: "sergei11@gmail.com"}
+    @valid_attrs %{email: "sergei@example.com"}
+    @update_attrs %{email: "sergei11@example.com"}
     @invalid_attrs %{email: nil}
 
     def create_test_user(attrs \\ %{}) do
@@ -31,7 +31,7 @@ defmodule MyApp.AccountsTest do
 
     test "successfully create user with valid params" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.email == "sergei@gmail.com"
+      assert user.email == "sergei@example.com"
     end
 
     test "fails create_user with invalid params" do
@@ -42,7 +42,7 @@ defmodule MyApp.AccountsTest do
       user = create_test_user()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == "sergei11@gmail.com"
+      assert user.email == "sergei11@example.com"
     end
 
     test "fails update user with invalid params" do
