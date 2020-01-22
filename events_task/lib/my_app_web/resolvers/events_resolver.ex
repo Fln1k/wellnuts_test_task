@@ -42,7 +42,14 @@ defmodule MyAppWeb.EventsResolver do
         {:ok, event}
 
       {:error, changeset} ->
-        {:error, "Event not created"}
+        case changeset.errors[:user_id] do
+          error ->
+            {error, _} = changeset.errors[:user_id]
+            {:error, error <> ", Event not created"}
+
+          nil ->
+            {:error, "blank value got, Event not created"}
+        end
     end
   end
 end

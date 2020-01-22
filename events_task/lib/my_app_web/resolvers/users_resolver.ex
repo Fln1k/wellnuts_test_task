@@ -13,28 +13,14 @@ defmodule MyAppWeb.UsersResolver do
 
   def find_user(params, _info) do
     case Accounts.get_user(params) do
-      nil -> {:error, "User with params #{params} not found!"}
-      user -> {:ok, user}
-    end
-  end
-
-  def find_user_by_email(%{email: email}, _info) do
-    case Accounts.get_user_by_email(email) do
-      nil -> {:error, "User email #{email} not found!"}
-      user -> {:ok, user}
-    end
-  end
-
-  def find_user_by_confirmation(%{user_id: id}, _info) do
-    case Accounts.get_user(id) do
-      nil -> {:error, "User id #{id} not found!"}
+      {:error, changeset} -> {:error, "User with params #{params} not found!"}
       user -> {:ok, user}
     end
   end
 
   def find_author(root, _args, _info) do
     case Accounts.get_user(root.user_id) do
-      nil -> {:error, "User id #{root.user_id} not found!"}
+      {:error, changeset} -> {:error, "User id #{root.user_id} not found!"}
       user -> {:ok, user}
     end
   end

@@ -25,11 +25,12 @@ defmodule MyAppWeb.ConfirmationsResolver do
 
   def create_confirmation(_root, args, _info) do
     case Content.create_confirmation(args) do
-      confirmation ->
-        confirmation
+      {:ok, confirmation} ->
+        {:ok, confirmation}
 
       {:error, changeset} ->
-        {:error, "Confirmation not created"}
+        {_, {error, _}} = hd(changeset.errors)
+        {:error, error <> ", Confirmation not created"}
     end
   end
 end

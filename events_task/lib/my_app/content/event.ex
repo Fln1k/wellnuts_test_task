@@ -16,6 +16,7 @@ defmodule MyApp.Content.Event do
     event
     |> cast(attrs, [:description, :timestamp, :user_id])
     |> validate_required([:description, :timestamp])
+    |> foreign_key_constraint(:user_id, message: "User don't exist")
   end
 
   def confirm_event(attrs \\ %{}) do
